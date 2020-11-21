@@ -18,35 +18,36 @@
 
 #include "cJSON.h"
 
-
+#include "led.h"
 
 static const char *TAG = "WEBSOCKET";
 
 esp_websocket_client_handle_t client;
-#define DEVICE_NAME  "Smart Light 4"
-#define DEVICE_UUID "02fd0148-7023-4e36-a6a5-79ae12753d94"
-#define VARIABLE_UUID "c391b0c7-0464-4a8d-aee8-0fe307a85247"
+#define DEVICE_NAME  "Smart RGB Light"
+#define DEVICE_UUID "d60a0a26-0876-40b4-b336-8a36f879112e"
+#define VARIABLE_UUID "56be315a-05b2-4f5e-8fd1-342b40c006fe"
 
 #define DEVICE_DESCRIPTION "{\"type\":0,\"reqId\":0,\"args\":{\"config\":{\"name\":\"" DEVICE_NAME \
-      "\",\"deviceUuid\":\"" DEVICE_UUID "\",\"vars\":{\"" VARIABLE_UUID "\":{\
-       \"name\":\"relayState\",\
-       \"schema\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\
-       \"properties\":{\"state\":{\"type\":\"boolean\"}},\"required\":[\"state\"],\"additionalProperties\":false}\",\"access\":\"rw\",\
-       \"value\":{\"state\":false}}}}}}"
+"\",\"deviceUuid\":\"" DEVICE_UUID "\",\"vars\":{\"" VARIABLE_UUID "\":{\
+\"name\":\"color\",\
+\"schema\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\
+\"properties\":{\"red\":{\"type\":\"integer\"}, \"green\":{\"type\":\"integer\"}, \"blue\":{\"type\":\"integer\"}},\"required\":[\"red\", \"green\", \"blue\"],\"additionalProperties\":false},\"access\":\"rw\",\
+\"value\":{\"red\":0, \"green\":0, \"blue\":0}}}}}}"
 
-#define NOTIFY_ON "{\"type\":6,\"args\":{\"deviceUuid\":\"" DEVICE_UUID "\",\"variableUuid\":\"" VARIABLE_UUID "\",\"value\":{\"state\":true}}}"
-#define NOTIFY_OFF "{\"type\":6,\"args\":{\"deviceUuid\":\"" DEVICE_UUID "\",\"variableUuid\":\"" VARIABLE_UUID "\",\"value\":{\"state\":false}}}"
+#define NOTIFY_TEMPLATE                                                             \
+"{\"type\":6,\"args\":{\"deviceUuid\":\"" DEVICE_UUID                        \
+"\",\"variableUuid\":\"" VARIABLE_UUID                                       \
+"\",\"value\":{\"red\":%d, \"green\":%d, \"blue\":%d}}}"
 
 void on_connected() {
+  ESP_LOGI(TAG, "send device description %s", DEVICE_DESCRIPTION);
   esp_websocket_client_send(client, DEVICE_DESCRIPTION, strlen(DEVICE_DESCRIPTION), portMAX_DELAY);
 }
 
-void notify_change(bool val) {
-  if (val) {
-    esp_websocket_client_send(client, NOTIFY_ON, strlen(NOTIFY_ON), portMAX_DELAY);
-  } else {
-    esp_websocket_client_send(client, NOTIFY_OFF, strlen(NOTIFY_OFF), portMAX_DELAY);
-  }
+void notify_change(uint8_t red, uint8_t green, uint8_t blue) {
+  char notification[200];
+  uint8_t len = sprintf(notification, NOTIFY_TEMPLATE, red, green, blue);
+  esp_websocket_client_send(client,notification, len, portMAX_DELAY);
 }
 
 void parse_message(const char *payload, const size_t len)
@@ -58,9 +59,11 @@ void parse_message(const char *payload, const size_t len)
   if (event_type == SetValue) {
     cJSON *args = cJSON_GetObjectItemCaseSensitive(json, "args");
     cJSON *value = cJSON_GetObjectItemCaseSensitive(args, "value");
-    cJSON *state= cJSON_GetObjectItemCaseSensitive(value, "state");
-    ESP_LOGI(TAG, "set value %d!\n", state->valueint);
-    notify_change(state->valueint);
+    cJSON *red = cJSON_GetObjectItemCaseSensitive(value, "red");
+    cJSON *green = cJSON_GetObjectItemCaseSensitive(value, "green");
+    cJSON *blue = cJSON_GetObjectItemCaseSensitive(value, "blue");
+    led_set_rgb(red->valueint, green->valueint, blue->valueint);
+    notify_change(red->valueint, green->valueint, blue->valueint);
   }
 }
 
