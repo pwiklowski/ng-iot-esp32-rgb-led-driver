@@ -15,11 +15,13 @@
 #include "esp_system.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_task.h"
 #include "nvs_flash.h"
 #include "string.h"
 
 #include "led.h"
 #include "wifi.h"
+#include "iot_connection.h"
 
 static const char *TAG = "main";
 
@@ -77,6 +79,9 @@ void app_main(void) {
 
   ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
   wifi_init_sta();
+
+  xTaskCreate(iot_start, "iot_start", 8192, NULL, ESP_TASK_MAIN_PRIO+1, NULL);
+
 
   led_init();
 }

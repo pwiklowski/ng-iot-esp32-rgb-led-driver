@@ -36,9 +36,6 @@ static void event_handler(void *arg, esp_event_base_t event_base,
     ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
     ESP_LOGI(TAG, "got ip:%s", ip4addr_ntoa(&event->ip_info.ip));
     xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
-
-    xTaskCreatePinnedToCore(iot_start, "iot_start", 8192, NULL, ESP_TASK_MAIN_PRIO,
-                            NULL, tskNO_AFFINITY);
   }
 }
 
