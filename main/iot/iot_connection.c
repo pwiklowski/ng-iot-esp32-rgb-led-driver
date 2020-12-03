@@ -41,7 +41,7 @@ const char *audience = "https%3A%2F%2Fwiklosoft.eu.auth0.com%2Fapi%2Fv2%2F";
 const char *scope = "profile+openid+offline_access";
 
 const char* AUTH_TOKEN_URL = "https://wiklosoft.eu.auth0.com/oauth/token";
-const char* AUTH_CODE_URL = "https://wiklosoft.eu.auth0.com/oauth/code";
+const char *AUTH_CODE_URL = "https://wiklosoft.eu.auth0.com/oauth/device/code";
 
 const char* IOT_SERVER_URL_TEMPLATE = "ws://192.168.1.28:8000/device?token=%s";
 //const char *IOT_SERVER_URL_TEMPLATE = "wss://iot.wiklosoft.com/connect/device?token=%s";
