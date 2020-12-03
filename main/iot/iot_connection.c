@@ -20,14 +20,14 @@
 #include "esp_http_client.h"
 
 #include "cJSON.h"
-#include "main.h"
+#include "config.h"
 
 #include "secrets.h"
 
 extern char *iot_device_get_description();
 extern void iot_device_event_handler(const char *payload, const size_t len);
 
-extern Config_t config;
+Config_t config;
 
 static const char *TAG = "WEBSOCKET";
 #define BUF_LEN 4096
@@ -136,8 +136,8 @@ void iot_handle_token_update(char* payload) {
   memcpy(config.refresh_token, refresh_token, strlen(refresh_token)+1);
   config.refresh_token_length = strlen(refresh_token);
 
-  save_config();
-  
+  save_config(&config);
+
   iot_emit_event(MSG_TOKEN_REFRESHED, 0, 0);
 }
 
@@ -229,6 +229,8 @@ void iot_handle_event(IotDeviceContext_t* context, IotEvent event, const uint8_t
 }
 
 void iot_start() {
+  read_config(&config);
+  
   xMessageBuffer = xMessageBufferCreate(1000);
   if (xMessageBuffer == NULL) {
     assert(true);

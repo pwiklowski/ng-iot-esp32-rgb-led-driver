@@ -1,5 +1,7 @@
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
+
+#include "esp_types.h"
 
 #define TOKEN_MAX_LEN 1500
 #define REFRESH_TOKEN_MAX_LEN 500
@@ -13,7 +15,7 @@ typedef struct {
 
 } Config_t;
 
+void read_config(Config_t* config);
+void save_config(Config_t* config);
 
-void save_config();
-
-#endif // __MAIN_H__
+#endif // __CONFIG_H__
