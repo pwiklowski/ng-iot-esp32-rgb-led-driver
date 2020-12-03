@@ -157,7 +157,6 @@ void iot_refresh_token() {
   }
 }
 
-
 int iot_check_login_response(char* device_code) {
   const char *grant_type = "urn:ietf:params:oauth:grant-type:device_code";
   size_t post_data_len = sprintf(buf, "client_id=%s&device_code=%s&grant_type=%s", CLIENT_ID, device_code, grant_type);
