@@ -1,12 +1,9 @@
 #include "esp_log.h"
 #include "esp_spi_flash.h"
 #include "esp_system.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #include "esp_task.h"
 #include "nvs_flash.h"
 
-#include "led.h"
 #include "wifi.h"
 #include "iot_connection.h"
 
@@ -22,7 +19,6 @@ void app_main(void) {
   }
 
   wifi_init_sta();
-  led_init();
 
   iot_init();
 }

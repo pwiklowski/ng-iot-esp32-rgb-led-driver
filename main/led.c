@@ -4,26 +4,31 @@
 
 #define LEDC_FADE_TIME (1500)
 
-ledc_channel_config_t led_red_channel = {.channel = LEDC_CHANNEL_0,
-                                         .duty = 0,
-                                         .gpio_num = 33,
-                                         .speed_mode = LEDC_HIGH_SPEED_MODE,
-                                         .hpoint = 0,
-                                         .timer_sel = LEDC_TIMER_0};
+ledc_channel_config_t led_red_channel = {
+  .channel = LEDC_CHANNEL_0,
+  .duty = 0,
+  .gpio_num = 33,
+  .speed_mode = LEDC_HIGH_SPEED_MODE,
+  .hpoint = 0,
+  .timer_sel = LEDC_TIMER_0
+};
 
 ledc_channel_config_t led_green_channel = {.channel = LEDC_CHANNEL_1,
-                                           .duty = 0,
-                                           .gpio_num = 27,
-                                           .speed_mode = LEDC_HIGH_SPEED_MODE,
-                                           .hpoint = 0,
-                                           .timer_sel = LEDC_TIMER_0};
+  .duty = 0,
+  .gpio_num = 27,
+  .speed_mode = LEDC_HIGH_SPEED_MODE,
+  .hpoint = 0,
+  .timer_sel = LEDC_TIMER_0
+};
 
-ledc_channel_config_t led_blue_channel = {.channel = LEDC_CHANNEL_2,
-                                          .duty = 0,
-                                          .gpio_num = 22,
-                                          .speed_mode = LEDC_HIGH_SPEED_MODE,
-                                          .hpoint = 0,
-                                          .timer_sel = LEDC_TIMER_0};
+ledc_channel_config_t led_blue_channel = {
+  .channel = LEDC_CHANNEL_2,
+  .duty = 0,
+  .gpio_num = 22,
+  .speed_mode = LEDC_HIGH_SPEED_MODE,
+  .hpoint = 0,
+  .timer_sel = LEDC_TIMER_0
+};
 
 void led_init() {
   ledc_timer_config_t ledc_timer = {
@@ -44,8 +49,7 @@ void led_init() {
 }
 
 void led_set_value(ledc_channel_config_t channel, uint8_t duty) {
-  ledc_set_fade_with_time(channel.speed_mode, channel.channel, duty,
-                          LEDC_FADE_TIME);
+  ledc_set_fade_with_time(channel.speed_mode, channel.channel, duty, LEDC_FADE_TIME);
   ledc_fade_start(channel.speed_mode, channel.channel, LEDC_FADE_NO_WAIT);
 }
 

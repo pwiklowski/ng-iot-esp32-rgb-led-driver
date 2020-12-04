@@ -26,6 +26,8 @@
 
 extern char *iot_device_get_description();
 extern void iot_device_event_handler(const char *payload, const size_t len);
+extern void iot_device_init();
+extern void iot_device_deinit();
 
 
 void websocket_open();
@@ -241,6 +243,8 @@ void iot_handle_event(IotDeviceContext_t* context, IotEvent event, const uint8_t
 
 void iot_start() {
   read_config(&config);
+
+  iot_device_init();
   
   xMessageBuffer = xMessageBufferCreate(1000);
   if (xMessageBuffer == NULL) {
@@ -261,6 +265,8 @@ void iot_start() {
       iot_handle_event(&context, buffer[0], &buffer[1], xReceivedBytes - 1);
     }
   }
+
+  iot_device_deinit();
 }
 
 
