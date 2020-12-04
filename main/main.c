@@ -1,4 +1,3 @@
-
 #include "esp_log.h"
 #include "esp_spi_flash.h"
 #include "esp_system.h"
@@ -13,11 +12,7 @@
 
 static const char *TAG = "main";
 
-;
-
-
 void app_main(void) {
-  printf("Hello world!\n");
   // Initialize NVS
   esp_err_t ret = nvs_flash_init();
   if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
@@ -27,6 +22,7 @@ void app_main(void) {
   }
 
   wifi_init_sta();
-  xTaskCreate(iot_start, "iot_start", 8192, NULL, ESP_TASK_MAIN_PRIO+1, NULL);
   led_init();
+
+  iot_init();
 }

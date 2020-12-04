@@ -27,6 +27,14 @@
 extern char *iot_device_get_description();
 extern void iot_device_event_handler(const char *payload, const size_t len);
 
+
+void websocket_open();
+void websocket_close();
+void iot_refresh_token();
+void iot_login();
+void iot_start();
+
+
 Config_t config;
 
 static const char *TAG = "WEBSOCKET";
@@ -106,6 +114,8 @@ int iot_post(char* url, char* post_data, uint16_t post_data_len, int* response_l
   };
   esp_http_client_handle_t client = esp_http_client_init(&config);
 
+  ESP_LOGI(TAG, "make POST request: %s", post_data);
+
   esp_http_client_set_url(client, url);
   esp_http_client_set_method(client, HTTP_METHOD_POST);
   esp_http_client_set_header(client, "Content-Type", "application/x-www-form-urlencoded");
@@ -118,6 +128,7 @@ int iot_post(char* url, char* post_data, uint16_t post_data_len, int* response_l
     *response_len = esp_http_client_read(client, buf, BUF_LEN);
     esp_http_client_close(client);
     esp_http_client_cleanup(client);
+    ESP_LOGE(TAG, "HTTP POST success: %d %s", status_code, buf);
     return status_code;
   } else {
     ESP_LOGE(TAG, "HTTP POST request failed: %s", esp_err_to_name(err));
@@ -250,4 +261,9 @@ void iot_start() {
       iot_handle_event(&context, buffer[0], &buffer[1], xReceivedBytes - 1);
     }
   }
+}
+
+
+void iot_init() {
+  xTaskCreate(iot_start, "iot_start", 8192, NULL, ESP_TASK_MAIN_PRIO + 1, NULL);
 }

@@ -38,10 +38,7 @@ void iot_emit_event(IotEvent event_id, uint8_t* data, uint16_t data_len);
 
 
 
-void websocket_open();
-void websocket_close();
-void iot_refresh_token();
-void iot_login();
-void iot_start();
+
+void iot_init();
 
 #endif // __IOT_CONNECTION_H__
