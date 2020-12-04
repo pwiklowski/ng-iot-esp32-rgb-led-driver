@@ -210,7 +210,7 @@ void iot_login() {
   }
 }
 
-void iot_handle_event(IotDeviceContext_t* context, IotEvent event, const uint8_t* data, const uint16_t data_len) {
+void iot_handle_event(IotEvent event, const uint8_t* data, const uint16_t data_len) {
   switch(event) {
     case MSG_STARTED:
       if (config.access_token_length == 0) {
@@ -223,7 +223,7 @@ void iot_handle_event(IotDeviceContext_t* context, IotEvent event, const uint8_t
       websocket_open();
       break;
     case MSG_WS_CONNECTED:
-      esp_websocket_client_send(client, context->device_description, strlen(context->device_description), 500);
+      esp_websocket_client_send(client, iot_device_get_description(), strlen(iot_device_get_description()), 500);
       break;
     case MSG_WS_DATA:
       iot_device_event_handler((const char *)data, data_len);
@@ -251,10 +251,6 @@ void iot_start() {
     assert(true);
   }
 
-  IotDeviceContext_t context;
-
-  context.device_description = iot_device_get_description();
-
   uint8_t buffer[512];
   uint8_t message[] = {MSG_STARTED};
   xMessageBufferSend(xMessageBuffer, message, sizeof(message), 100 / portTICK_PERIOD_MS);
@@ -262,13 +258,12 @@ void iot_start() {
   while (1) {
     size_t xReceivedBytes = xMessageBufferReceive(xMessageBuffer, buffer, sizeof(buffer), 100 / portTICK_PERIOD_MS);
     if (xReceivedBytes > 0) {
-      iot_handle_event(&context, buffer[0], &buffer[1], xReceivedBytes - 1);
+      iot_handle_event(buffer[0], &buffer[1], xReceivedBytes - 1);
     }
   }
 
   iot_device_deinit();
 }
-
 
 void iot_init() {
   xTaskCreate(iot_start, "iot_start", 8192, NULL, ESP_TASK_MAIN_PRIO + 1, NULL);

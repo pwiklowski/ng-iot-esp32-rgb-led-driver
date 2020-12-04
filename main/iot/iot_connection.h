@@ -17,10 +17,6 @@ enum MessageType {
   Error
 };
 
-typedef struct {
-  char *device_description;
-} IotDeviceContext_t;
-
 typedef enum{
   MSG_STARTED,
 
@@ -35,9 +31,6 @@ typedef enum{
 } IotEvent;
 
 void iot_emit_event(IotEvent event_id, uint8_t* data, uint16_t data_len);
-
-
-
 
 void iot_init();
 
