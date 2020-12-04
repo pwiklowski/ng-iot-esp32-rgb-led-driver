@@ -1,5 +1,5 @@
-#ifndef __IOT_CONNECTION_H__
-#define __IOT_CONNECTION_H__
+#ifndef __IOT_H__
+#define __IOT_H__
 
 #include "esp_types.h"
 
@@ -34,4 +34,4 @@ void iot_emit_event(IotEvent event_id, uint8_t* data, uint16_t data_len);
 
 void iot_init();
 
-#endif // __IOT_CONNECTION_H__
+#endif // __IOT_H__

@@ -11,7 +11,6 @@
 #include "lwip/sys.h"
 
 #include "wifi.h"
-#include "iot_connection.h"
 #include "secrets.h"
 
 static const char *TAG = "wifi";

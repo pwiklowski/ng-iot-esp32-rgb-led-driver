@@ -5,7 +5,7 @@
 #include "nvs_flash.h"
 
 #include "wifi.h"
-#include "iot_connection.h"
+#include "iot.h"
 
 static const char *TAG = "main";
 
