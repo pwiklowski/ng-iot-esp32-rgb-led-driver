@@ -47,6 +47,8 @@ void iot_device_event_handler(const char *payload, const size_t len) {
     led_set_rgb(red->valueint, green->valueint, blue->valueint);
     iot_device_value_updated(red->valueint, green->valueint, blue->valueint);
   }
+  cJSON_Delete(json);
+
 }
 
 void iot_device_init() {
