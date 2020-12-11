@@ -33,7 +33,6 @@ void iot_device_value_updated(uint8_t red, uint8_t green, uint8_t blue) {
 }
 
 void iot_device_event_handler(const char *payload, const size_t len) {
-  ESP_LOGI(TAG, "iot_event_handler %s", payload);
 
   cJSON *json = cJSON_Parse((char*)payload);
   int event_type = cJSON_GetObjectItemCaseSensitive(json, "type")->valueint;
