@@ -15,20 +15,30 @@ char* VARIABLE_UUID = "56be315a-05b2-4f5e-8fd1-342b40c006fe";
 #define DEVICE_DESCRIPTION "{\"type\":0,\"reqId\":0,\"args\":{\"config\":{\"name\":\"%s\",\"deviceUuid\":\"%s\",\"vars\":{\"%s\":{\
 \"name\":\"color\",\"schema\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\
 \"properties\":{\"red\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":255}, \"green\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":255}, \"blue\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":255},\"power\":{\"type\":\"number\",\"minimum\":0,\"maximum\":1}},\"required\":[\"red\", \"green\", \"blue\",\"power\"],\"additionalProperties\":false},\"access\":\"rw\",\
-\"value\":{\"red\":0, \"green\":0, \"blue\":0, \"power\":0.0}}}}}}"
+\"value\":{\"red\":%d, \"green\":%d, \"blue\":%d, \"power\":%f}}}}}}"
 
 #define NOTIFY_TEMPLATE "{\"type\":6,\"args\":{\"deviceUuid\":\"%s\",\"variableUuid\":\"%s\",\"value\":{\"red\":%d, \"green\":%d, \"blue\":%d, \"power\":%f}}}"
 
+float current_power = 0.4;
+uint8_t current_red = 0;
+uint8_t current_blue = 0;
+uint8_t current_green = 0;
+
 
 char* iot_device_get_description() {
-  size_t needed = snprintf(NULL, 0, DEVICE_DESCRIPTION, DEVICE_NAME, DEVICE_UUID, VARIABLE_UUID) + 1;
+  size_t needed = snprintf(NULL, 0, DEVICE_DESCRIPTION, DEVICE_NAME, DEVICE_UUID, VARIABLE_UUID, current_red, current_green, current_blue, current_power) + 1;
   char* description = malloc(needed);
-  sprintf(description, DEVICE_DESCRIPTION, DEVICE_NAME, DEVICE_UUID, VARIABLE_UUID);
+  sprintf(description, DEVICE_DESCRIPTION, DEVICE_NAME, DEVICE_UUID, VARIABLE_UUID, current_red, current_green, current_blue, current_power);
   return description;
 }
 
 void iot_device_value_updated(uint8_t red, uint8_t green, uint8_t blue, float power) {
   ESP_LOGI(TAG, "iot_device_value_updated %f %d %d %d", power, red, green, blue);
+
+  current_power = power;
+  current_red = red;
+  current_green = green;
+  current_blue = blue;
 
   char* notification[200];
   uint16_t len = sprintf(notification, NOTIFY_TEMPLATE, DEVICE_UUID, VARIABLE_UUID, red, green, blue, power);
