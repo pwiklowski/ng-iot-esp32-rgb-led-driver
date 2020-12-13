@@ -28,6 +28,8 @@ char* iot_device_get_description() {
 }
 
 void iot_device_value_updated(uint8_t red, uint8_t green, uint8_t blue, float power) {
+  ESP_LOGI(TAG, "iot_device_value_updated %f %d %d %d", power, red, green, blue);
+
   char* notification[200];
   uint16_t len = sprintf(notification, NOTIFY_TEMPLATE, DEVICE_UUID, VARIABLE_UUID, red, green, blue, power);
   iot_emit_event(MSG_IOT_VALUE_UPDATED, notification, len);
