@@ -19,10 +19,11 @@ char* VARIABLE_UUID = "56be315a-05b2-4f5e-8fd1-342b40c006fe";
 
 #define NOTIFY_TEMPLATE "{\"type\":6,\"args\":{\"deviceUuid\":\"%s\",\"variableUuid\":\"%s\",\"value\":{\"red\":%d, \"green\":%d, \"blue\":%d, \"power\":%f}}}"
 
-char *description = NULL;
 
-//make sure to call it only once or make iot-device_init / deinit functions
-char *iot_device_get_description() {
+char* iot_device_get_description() {
+  size_t needed = snprintf(NULL, 0, DEVICE_DESCRIPTION, DEVICE_NAME, DEVICE_UUID, VARIABLE_UUID) + 1;
+  char* description = malloc(needed);
+  sprintf(description, DEVICE_DESCRIPTION, DEVICE_NAME, DEVICE_UUID, VARIABLE_UUID);
   return description;
 }
 
@@ -50,13 +51,8 @@ void iot_device_event_handler(const char *payload, const size_t len) {
 }
 
 void iot_device_init() {
-  size_t needed = snprintf(NULL, 0, DEVICE_DESCRIPTION, DEVICE_NAME, DEVICE_UUID, VARIABLE_UUID) + 1;
-  description = malloc(needed);
-  sprintf(description, DEVICE_DESCRIPTION, DEVICE_NAME, DEVICE_UUID, VARIABLE_UUID);
-
   led_init();
 }
 
 void iot_device_deinit() {
-  free(description);
 }
