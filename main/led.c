@@ -2,8 +2,6 @@
 #include "driver/gpio.h"
 #include "driver/ledc.h"
 
-#define LEDC_FADE_TIME (1500)
-
 ledc_channel_config_t led_red_channel = {
   .channel = LEDC_CHANNEL_0,
   .duty = 0,
@@ -43,14 +41,11 @@ void led_init() {
   ledc_channel_config(&led_red_channel);
   ledc_channel_config(&led_green_channel);
   ledc_channel_config(&led_blue_channel);
-
-  // Initialize fade service.
-  ledc_fade_func_install(0);
 }
 
 void led_set_value(ledc_channel_config_t channel, uint8_t duty) {
-  ledc_set_fade_with_time(channel.speed_mode, channel.channel, duty, LEDC_FADE_TIME);
-  ledc_fade_start(channel.speed_mode, channel.channel, LEDC_FADE_NO_WAIT);
+  ledc_set_duty(channel.speed_mode, channel.channel, duty);
+  ledc_update_duty(channel.speed_mode, channel.channel);
 }
 
 void led_set_rgb(uint8_t red, uint8_t green, uint8_t blue) {
