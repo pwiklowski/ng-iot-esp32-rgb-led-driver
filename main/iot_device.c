@@ -68,3 +68,8 @@ void iot_device_init() {
 
 void iot_device_deinit() {
 }
+
+
+void iot_device_start() {
+  iot_init();
+}

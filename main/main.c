@@ -5,7 +5,7 @@
 #include "nvs_flash.h"
 
 #include "wifi.h"
-#include "iot.h"
+#include "iot_device.h"
 
 static const char *TAG = "main";
 
@@ -20,5 +20,5 @@ void app_main(void) {
 
   wifi_init_sta();
 
-  iot_init();
+  iot_device_start();
 }
