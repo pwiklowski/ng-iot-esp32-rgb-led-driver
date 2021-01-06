@@ -4,12 +4,16 @@
 #include <stdio.h>
 #include "esp_heap_caps.h"
 #include "esp_log.h"
+#include "esp_system.h"
 #include "led.h"
 
 char* TAG = "IOT_DEVICE";
 
 char* DEVICE_NAME = "Smart RGB Light";
-char* DEVICE_UUID = "d60a0a26-0876-40b4-b336-8a36f879112e";
+
+#define DEVICE_UUID_TEMPLATE "%02x%02x%02x%02x-%02x%02x-40b4-b336-8a36f879111e"
+char DEVICE_UUID[38];
+
 char* VARIABLE_UUID = "56be315a-05b2-4f5e-8fd1-342b40c006fe";
 
 #define DEVICE_DESCRIPTION "{\"type\":0,\"reqId\":0,\"args\":{\"config\":{\"name\":\"%s\",\"deviceUuid\":\"%s\",\"vars\":{\"%s\":{\
@@ -63,6 +67,12 @@ void iot_device_event_handler(const char *payload, const size_t len) {
 }
 
 void iot_device_init() {
+  uint8_t chipid[6];
+  esp_read_mac(chipid, ESP_MAC_WIFI_STA);
+
+  sprintf(DEVICE_UUID, DEVICE_UUID_TEMPLATE, chipid[0], chipid[1], chipid[2], chipid[3], chipid[4], chipid[5]);
+
+  ESP_LOGI(TAG, "iot_device start with uuid %s ", DEVICE_UUID);
   led_init();
 }
 
