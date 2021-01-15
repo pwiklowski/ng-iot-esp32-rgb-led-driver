@@ -7,6 +7,8 @@
 #include "wifi.h"
 #include "iot_device.h"
 
+#include "settings.c"
+
 static const char *TAG = "main";
 
 void app_main(void) {
