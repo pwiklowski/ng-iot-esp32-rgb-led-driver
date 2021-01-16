@@ -10,15 +10,11 @@
 
 char *TAG = "IOT_DEVICE";
 
-char *DEVICE_NAME = "Smart RGB Light";
-
-#define DEVICE_UUID_TEMPLATE "%02x%02x%02x%02x-%02x%02x-40b4-b336-8a36f879111e"
-char DEVICE_UUID[38];
-
 char *VARIABLE_UUID = "56be315a-05b2-4f5e-8fd1-342b40c006fe";
 
 #define SCHEMA "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"red\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":255}, \"green\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":255}, \"blue\":{\"type\":\"integer\",\"minimum\":0,\"maximum\":255},\"power\":{\"type\":\"number\",\"minimum\":0,\"maximum\":1}},\"required\":[\"red\", \"green\", \"blue\",\"power\"],\"additionalProperties\":false}"
 
+char device_uuid[38];
 cJSON *color_value;
 cJSON *color_value_red;
 cJSON *color_value_green;
@@ -27,11 +23,14 @@ cJSON *color_value_power;
 
 
 cJSON* iot_device_get_description() {
+  char version[32];
+  char name[32];
+  iot_get_app_version(name, version);
 
   cJSON *device = cJSON_CreateObject();
-  cJSON_AddStringToObject(device, "name", DEVICE_NAME);
-  cJSON_AddStringToObject(device, "deviceUuid", DEVICE_UUID);
-
+  cJSON_AddStringToObject(device, "name", name);
+  cJSON_AddStringToObject(device, "deviceUuid", device_uuid);
+  cJSON_AddStringToObject(device, "version", version);
   cJSON *vars = cJSON_AddObjectToObject(device, "vars");
 
   iot_create_variable_description(vars, VARIABLE_UUID, "color", "rw", SCHEMA, cJSON_Duplicate(color_value, true));
@@ -47,7 +46,7 @@ void iot_device_value_updated(uint8_t red, uint8_t green, uint8_t blue, float po
   cJSON_SetNumberValue(color_value_green, green);
   cJSON_SetNumberValue(color_value_blue, blue);
 
-  iot_send_value_changed_notifcation(DEVICE_UUID, VARIABLE_UUID, color_value);
+  iot_send_value_changed_notifcation(device_uuid, VARIABLE_UUID, color_value);
 }
 
 void iot_device_event_handler(const char *payload, const size_t len) {
@@ -76,18 +75,13 @@ void iot_device_event_handler(const char *payload, const size_t len) {
 }
 
 void iot_device_init() {
+  iot_get_device_uuid(device_uuid);
+
   color_value = cJSON_CreateObject();
   color_value_red = cJSON_AddNumberToObject(color_value, "red", 0);
   color_value_green = cJSON_AddNumberToObject(color_value, "green", 0);
   color_value_blue = cJSON_AddNumberToObject(color_value, "blue", 0);
   color_value_power = cJSON_AddNumberToObject(color_value, "power", 0);
-
-  uint8_t chipid[6];
-  esp_read_mac(chipid, ESP_MAC_WIFI_STA);
-
-  sprintf(DEVICE_UUID, DEVICE_UUID_TEMPLATE, chipid[0], chipid[1], chipid[2], chipid[3], chipid[4], chipid[5]);
-
-  ESP_LOGI(TAG, "iot_device start with uuid %s ", DEVICE_UUID);
 
   led_init();
 }
