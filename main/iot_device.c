@@ -26,8 +26,7 @@ cJSON *color_value_blue;
 cJSON *color_value_power;
 
 
-
-char* iot_device_get_description() {
+cJSON* iot_device_get_description() {
 
   cJSON *device = cJSON_CreateObject();
   cJSON_AddStringToObject(device, "name", DEVICE_NAME);
@@ -36,13 +35,7 @@ char* iot_device_get_description() {
   cJSON *vars = cJSON_AddObjectToObject(device, "vars");
 
   iot_create_variable_description(vars, VARIABLE_UUID, "color", "rw", SCHEMA, cJSON_Duplicate(color_value, true));
-
-  char *string = cJSON_Print(device);
-  cJSON_Delete(device);
-
-  ESP_LOGI(TAG, "iot_device_get_description %s ", string);
-
-  return string;
+  return device;
 }
 
 
@@ -71,6 +64,13 @@ void iot_device_event_handler(const char *payload, const size_t len) {
     led_set_rgb(power->valuedouble * red->valueint, power->valuedouble * green->valueint,
         power->valuedouble * blue->valueint);
     iot_device_value_updated(red->valueint, green->valueint, blue->valueint, power->valuedouble);
+  } else if (event_type == Hello) {
+    int req_id = cJSON_GetObjectItemCaseSensitive(json, "reqId")->valueint;
+    cJSON *res = cJSON_CreateObject();
+    cJSON* description = iot_device_get_description();
+    cJSON_AddItemToObject(res, "config",  description);
+
+    iot_device_send_response(req_id, res);
   }
   cJSON_Delete(json);
 }
