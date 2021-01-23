@@ -1,0 +1,12 @@
+image: espressif/idf:latest
+
+
+build:
+  stage: build
+  script:
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.wiklosoft.com/ng-iot/esp-idf-iot-library.git esp-idf-iot-library
+    - idf.py -DEXTRA_COMPONENT_DIRS=esp-idf-iot-library build
+  artifacts:
+    paths:
+      - build
+
