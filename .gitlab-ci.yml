@@ -4,10 +4,10 @@ build:
   stage: build
   script:
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.wiklosoft.com/ng-iot/esp-idf-iot-library.git esp-idf-iot-library
-    - VARIANT=VARIANT_3CH idf.py -DEXTRA_COMPONENT_DIRS=esp-idf-iot-library build
-    - VARIANT=VARIANT_6CH idf.py -DEXTRA_COMPONENT_DIRS=esp-idf-iot-library build
-    - VARIANT=VARIANT_3CH_RGB idf.py -DEXTRA_COMPONENT_DIRS=esp-idf-iot-library build
-    - VARIANT=VARIANT_6CH_RGB idf.py -DEXTRA_COMPONENT_DIRS=esp-idf-iot-library build
+    - VARIANT=VARIANT_3CH idf.py -DEXTRA_COMPONENT_DIRS=esp-idf-iot-library reconfigure build
+    - VARIANT=VARIANT_6CH idf.py -DEXTRA_COMPONENT_DIRS=esp-idf-iot-library reconfigure build
+    - VARIANT=VARIANT_3CH_RGB idf.py -DEXTRA_COMPONENT_DIRS=esp-idf-iot-library reconfigure build
+    - VARIANT=VARIANT_6CH_RGB idf.py -DEXTRA_COMPONENT_DIRS=esp-idf-iot-library reconfigure build
   artifacts:
     paths:
       - build
