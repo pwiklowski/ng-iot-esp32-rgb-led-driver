@@ -8,8 +8,6 @@
 #ifndef MAIN_IOT_DEVICE_H_
 #define MAIN_IOT_DEVICE_H_
 
-
 void iot_device_start();
-
 
 #endif /* MAIN_IOT_DEVICE_H_ */
